@@ -1,7 +1,7 @@
 {
   "name": "@assistant-manager/assistant-manager",
   "description": "Assistant management plugin for deepseek-harness: manage AI assistants with per-assistant markdown profiles, chat-integrated creation flow, and context injection.",
-  "version": "0.1.0-R6",
+  "version": "0.1.0",
   "license": "MIT",
   "keywords": [
     "deepseek",
