@@ -1,0 +1,7 @@
+node_modules/
+lib/
+client/client.js
+*.tgz
+.idea/
+.DS_Store
+*.log
