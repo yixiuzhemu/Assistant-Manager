@@ -199,12 +199,24 @@ export class AssistantManagerController {
     const newAssistantCreated = previous.creating
       && view?.assistants.length !== undefined
       && view.assistants.length > previous.assistants.length
+    // Converge the dropdown with the Host's live registration: adopt the
+    // Host's pin on the first read of a fresh page (the Host restores it
+    // from disk), and re-assert ours when a Host reload dropped it.
+    let selectedAssistantId = previous.selectedAssistantId
+    if (view !== undefined) {
+      if (!previous.loaded && previous.selectedAssistantId === undefined && view.selectedAssistantId !== undefined) {
+        selectedAssistantId = view.selectedAssistantId
+      } else if (previous.loaded && previous.selectedAssistantId !== undefined && view.selectedAssistantId === undefined) {
+        this.reassertSelection(previous.selectedAssistantId)
+      }
+    }
     this.store.set({
       ...previous,
       loaded: true,
       documentPath: view?.documentPath ?? '',
       revision: view?.revision ?? 0,
       assistants: view?.assistants ?? [],
+      selectedAssistantId,
       // Reset creating state when assistants are loaded (new assistant detected)
       creating: view?.assistants.length === 0 ? previous.creating : false,
       // Clear status message when a new assistant is created
@@ -226,9 +238,32 @@ export class AssistantManagerController {
 
   /** Select an assistant for Chat context injection. */
   private selectAssistant(id: string | undefined): void {
+    const previous = this.store.getSnapshot().selectedAssistantId
     this.patch({ selectedAssistantId: id })
     // Notify the Host to register/unregister the system prompt section.
-    void this.assistant.selectAssistant(id)
+    void this.assistant.selectAssistant(id).then((result) => {
+      if (this.disposed || result.ok) return
+      // The Host refused the registration: roll the selection back so the
+      // dropdown never claims an identity the model will not receive.
+      this.patch({
+        selectedAssistantId: previous,
+        error: { kind: 'remote', detail: remoteDetail(result.error) },
+      })
+    })
+  }
+
+  /**
+   * Re-send the selection to the Host after a Host restart or live patch
+   * reload dropped the registration while this page kept showing it.
+   */
+  private reassertSelection(id: string): void {
+    void this.assistant.selectAssistant(id).then((result) => {
+      if (this.disposed || result.ok) return
+      this.patch({
+        selectedAssistantId: undefined,
+        error: { kind: 'remote', detail: remoteDetail(result.error) },
+      })
+    })
   }
 
   /** Remove one assistant. */

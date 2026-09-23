@@ -11,8 +11,9 @@ declare module '@deepseek-ai/cordis' {
   interface Events {
     /**
      * The supervised assistant set changed: an assistant was added, removed,
-     * or updated. This payload-free notification fires at each commit point;
-     * consumers re-read the registry's `listAssistants()` for the new state.
+     * or updated, or the pinned selection changed. This payload-free
+     * notification fires at each commit point; consumers re-read the
+     * registry's `listAssistants()` for the new state.
      * @mode emit
      */
     'assistant/assistants-updated'(): void
@@ -57,4 +58,6 @@ export interface AssistantListView {
   documentPath: string
   /** Monotonic revision; pass back as the write guard. */
   revision: number
+  /** The assistant the Host currently pins into the system prompt, if any. */
+  selectedAssistantId: string | undefined
 }
