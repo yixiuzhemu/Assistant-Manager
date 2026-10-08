@@ -5,3 +5,4 @@ client/client.js
 .idea/
 .DS_Store
 *.log
+.npmrc
