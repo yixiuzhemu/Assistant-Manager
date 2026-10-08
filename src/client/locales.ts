@@ -4,7 +4,7 @@
  * the section re-registers on locale change so the nav label follows the
  * active language without a page reload.
  *
- * @module @assistant-manager/assistant-manager/client/locales
+ * @module @dtranx/assistant-manager/client/locales
  */
 
 /** Locale keys the assistant management surfaces render. */

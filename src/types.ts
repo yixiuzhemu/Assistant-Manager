@@ -4,7 +4,7 @@
  * Cordis event that announces a change so configuration surfaces refresh
  * without polling.
  *
- * @module @assistant-manager/assistant-manager/types
+ * @module @dtranx/assistant-manager/types
  */
 
 declare module '@deepseek-ai/cordis' {

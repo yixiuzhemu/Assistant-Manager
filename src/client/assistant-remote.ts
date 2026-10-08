@@ -1,19 +1,19 @@
 /**
  * The `assistant` Remote namespace's Client contribution — the wire
  * descriptors the management surface mounts so `ctx.remote.assistant`
- * answers with the same shape the Host `@assistant-manager/assistant-manager`
+ * answers with the same shape the Host `@dtranx/assistant-manager`
  * service emits.
  *
  * Inside a full deepseek-harness build the typert generator derives this
  * module from the registry's `@Remote` methods and publishes it as
- * `@assistant-manager/assistant-manager/remote`, which the
+ * `@dtranx/assistant-manager/remote`, which the
  * `@deepseek-ai/dsh-api-remotes` assembly mounts. This package ships the
  * equivalent by hand so the management surface is self-contained: its
  * `apply` mounts {@link ASSISTANT_REMOTE} directly, and a deployment must
  * therefore NOT also add the assistant namespace to that assembly (a
  * second mount of one namespace is refused).
  *
- * @module @assistant-manager/assistant-manager/client/assistant-remote
+ * @module @dtranx/assistant-manager/client/assistant-remote
  */
 
 import { z } from 'zod'
@@ -95,10 +95,10 @@ declare module '@deepseek-ai/dsh-typert-protocol' {
  * every argument and result at the wire boundary.
  */
 export const ASSISTANT_REMOTE: TypertRemoteContribution = {
-  package: '@assistant-manager/assistant-manager',
+  package: '@dtranx/assistant-manager',
   descriptors: [
     {
-      id: '@assistant-manager/assistant-manager#assistant/listAssistants',
+      id: '@dtranx/assistant-manager#assistant/listAssistants',
       service: 'assistantRegistry',
       namespace: 'assistant',
       method: 'listAssistants',
@@ -106,13 +106,13 @@ export const ASSISTANT_REMOTE: TypertRemoteContribution = {
       parameters: [],
       result: {
         mode: 'strict',
-        typeSymbol: '@assistant-manager/assistant-manager/types#AssistantListView',
+        typeSymbol: '@dtranx/assistant-manager/types#AssistantListView',
         schema: assistantListViewSchema,
       },
       sourceLocation: { file: 'src/index.ts', line: 100, column: 3 },
     },
     {
-      id: '@assistant-manager/assistant-manager#assistant/readAssistant',
+      id: '@dtranx/assistant-manager#assistant/readAssistant',
       service: 'assistantRegistry',
       namespace: 'assistant',
       method: 'readAssistant',
@@ -124,20 +124,20 @@ export const ASSISTANT_REMOTE: TypertRemoteContribution = {
           source: 'json',
           codec: {
             mode: 'strict',
-            typeSymbol: '@assistant-manager/assistant-manager#assistant/readAssistant:id',
+            typeSymbol: '@dtranx/assistant-manager#assistant/readAssistant:id',
             schema: assistantIdSchema,
           },
         },
       ],
       result: {
         mode: 'strict',
-        typeSymbol: '@assistant-manager/assistant-manager/types#AssistantProfile',
+        typeSymbol: '@dtranx/assistant-manager/types#AssistantProfile',
         schema: assistantProfileSchema,
       },
       sourceLocation: { file: 'src/index.ts', line: 115, column: 3 },
     },
     {
-      id: '@assistant-manager/assistant-manager#assistant/writeAssistant',
+      id: '@dtranx/assistant-manager#assistant/writeAssistant',
       service: 'assistantRegistry',
       namespace: 'assistant',
       method: 'writeAssistant',
@@ -149,20 +149,20 @@ export const ASSISTANT_REMOTE: TypertRemoteContribution = {
           source: 'json',
           codec: {
             mode: 'strict',
-            typeSymbol: '@assistant-manager/assistant-manager#assistant/writeAssistant:profile',
+            typeSymbol: '@dtranx/assistant-manager#assistant/writeAssistant:profile',
             schema: writeProfileSchema,
           },
         },
       ],
       result: {
         mode: 'strict',
-        typeSymbol: '@assistant-manager/assistant-manager/types#AssistantProfile',
+        typeSymbol: '@dtranx/assistant-manager/types#AssistantProfile',
         schema: assistantProfileSchema,
       },
       sourceLocation: { file: 'src/index.ts', line: 135, column: 3 },
     },
     {
-      id: '@assistant-manager/assistant-manager#assistant/removeAssistant',
+      id: '@dtranx/assistant-manager#assistant/removeAssistant',
       service: 'assistantRegistry',
       namespace: 'assistant',
       method: 'removeAssistant',
@@ -174,20 +174,20 @@ export const ASSISTANT_REMOTE: TypertRemoteContribution = {
           source: 'json',
           codec: {
             mode: 'strict',
-            typeSymbol: '@assistant-manager/assistant-manager#assistant/removeAssistant:id',
+            typeSymbol: '@dtranx/assistant-manager#assistant/removeAssistant:id',
             schema: assistantIdSchema,
           },
         },
       ],
       result: {
         mode: 'strict',
-        typeSymbol: '@assistant-manager/assistant-manager/types#AssistantListView',
+        typeSymbol: '@dtranx/assistant-manager/types#AssistantListView',
         schema: assistantListViewSchema,
       },
       sourceLocation: { file: 'src/index.ts', line: 160, column: 3 },
     },
     {
-      id: '@assistant-manager/assistant-manager#assistant/getSystemPrompt',
+      id: '@dtranx/assistant-manager#assistant/getSystemPrompt',
       service: 'assistantRegistry',
       namespace: 'assistant',
       method: 'getSystemPrompt',
@@ -199,20 +199,20 @@ export const ASSISTANT_REMOTE: TypertRemoteContribution = {
           source: 'json',
           codec: {
             mode: 'strict',
-            typeSymbol: '@assistant-manager/assistant-manager#assistant/getSystemPrompt:id',
+            typeSymbol: '@dtranx/assistant-manager#assistant/getSystemPrompt:id',
             schema: assistantIdSchema,
           },
         },
       ],
       result: {
         mode: 'strict',
-        typeSymbol: '@assistant-manager/assistant-manager#assistant/getSystemPrompt:result',
+        typeSymbol: '@dtranx/assistant-manager#assistant/getSystemPrompt:result',
         schema: systemPromptSchema,
       },
       sourceLocation: { file: 'src/index.ts', line: 178, column: 3 },
     },
     {
-      id: '@assistant-manager/assistant-manager#assistant/generateId',
+      id: '@dtranx/assistant-manager#assistant/generateId',
       service: 'assistantRegistry',
       namespace: 'assistant',
       method: 'generateId',
@@ -224,20 +224,20 @@ export const ASSISTANT_REMOTE: TypertRemoteContribution = {
           source: 'json',
           codec: {
             mode: 'strict',
-            typeSymbol: '@assistant-manager/assistant-manager#assistant/generateId:name',
+            typeSymbol: '@dtranx/assistant-manager#assistant/generateId:name',
             schema: z.string(),
           },
         },
       ],
       result: {
         mode: 'strict',
-        typeSymbol: '@assistant-manager/assistant-manager#assistant/generateId:result',
+        typeSymbol: '@dtranx/assistant-manager#assistant/generateId:result',
         schema: generatedIdSchema,
       },
       sourceLocation: { file: 'src/index.ts', line: 192, column: 3 },
     },
     {
-      id: '@assistant-manager/assistant-manager#assistant/selectAssistant',
+      id: '@dtranx/assistant-manager#assistant/selectAssistant',
       service: 'assistantRegistry',
       namespace: 'assistant',
       method: 'selectAssistant',
@@ -249,14 +249,14 @@ export const ASSISTANT_REMOTE: TypertRemoteContribution = {
           source: 'json',
           codec: {
             mode: 'strict',
-            typeSymbol: '@assistant-manager/assistant-manager#assistant/selectAssistant:id',
+            typeSymbol: '@dtranx/assistant-manager#assistant/selectAssistant:id',
             schema: z.union([z.string(), z.undefined()]),
           },
         },
       ],
       result: {
         mode: 'strict',
-        typeSymbol: '@assistant-manager/assistant-manager#assistant/selectAssistant:result',
+        typeSymbol: '@dtranx/assistant-manager#assistant/selectAssistant:result',
         schema: z.void(),
       },
       sourceLocation: { file: 'src/index.ts', line: 210, column: 3 },

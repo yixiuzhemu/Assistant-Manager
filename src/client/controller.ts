@@ -8,7 +8,7 @@
  * All RPC calls are serialized on one queue so an action's answer is never
  * clobbered by a concurrent reload.
  *
- * @module @assistant-manager/assistant-manager/client/controller
+ * @module @dtranx/assistant-manager/client/controller
  */
 
 import { createSnapshotStore, type SnapshotStore } from '@deepseek-ai/dsh-client-store'

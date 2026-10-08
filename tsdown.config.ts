@@ -12,7 +12,7 @@ import { basename, dirname, relative, resolve as resolvePath } from 'node:path'
 import { defineConfig } from 'tsdown'
 import { transform } from 'lightningcss'
 
-const id = '@assistant-manager/assistant-manager'
+const id = '@dtranx/assistant-manager'
 
 /**
  * Externals resolved from the loader module table at runtime. The dsh client

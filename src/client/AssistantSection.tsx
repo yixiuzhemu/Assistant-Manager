@@ -7,7 +7,7 @@
  * When no assistants exist, an empty state is shown with a prominent
  * "Create Assistant" button that triggers the Chat-based creation flow.
  *
- * @module @assistant-manager/assistant-manager/client/AssistantSection
+ * @module @dtranx/assistant-manager/client/AssistantSection
  */
 
 import { useState } from 'react'

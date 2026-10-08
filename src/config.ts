@@ -2,7 +2,7 @@
  * Schemastery schema for one assistant profile and the registry config that
  * dicts them by assistant id. The plugin entry owns the section schema.
  *
- * @module @assistant-manager/assistant-manager/config
+ * @module @dtranx/assistant-manager/config
  */
 
 import z from '@deepseek-ai/schemastery'

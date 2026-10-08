@@ -4,7 +4,7 @@
  * controller injects that assistant's markdown content as system-prompt
  * context for the current session.
  *
- * @module @assistant-manager/assistant-manager/client/AssistantChatSelector
+ * @module @dtranx/assistant-manager/client/AssistantChatSelector
  */
 
 import { useState, useRef, useEffect } from 'react'

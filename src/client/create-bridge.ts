@@ -7,7 +7,7 @@
  * Supports pending requests: when dispatched, the request is queued and
  * delivered to the next listener that mounts (for new session flows).
  *
- * @module @assistant-manager/assistant-manager/client/create-bridge
+ * @module @dtranx/assistant-manager/client/create-bridge
  */
 
 /** Payload of a create-assistant request. */

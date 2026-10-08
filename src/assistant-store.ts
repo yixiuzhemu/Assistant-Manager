@@ -5,7 +5,7 @@
  * and watches the directory for external changes so a hand-edit reaches
  * the supervisor without a restart.
  *
- * @module @assistant-manager/assistant-manager/assistant-store
+ * @module @dtranx/assistant-manager/assistant-store
  */
 
 import { watchFile, unwatchFile, readdirSync, statSync } from 'node:fs'

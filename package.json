@@ -1,5 +1,5 @@
 {
-  "name": "@assistant-manager/assistant-manager",
+  "name": "@dtranx/assistant-manager",
   "description": "Assistant management plugin for deepseek-harness: manage AI assistants with per-assistant markdown profiles, chat-integrated creation flow, and context injection.",
   "version": "0.2.0",
   "license": "MIT",
@@ -82,7 +82,6 @@
     }
   },
   "devDependencies": {
-    "@assistant-manager/assistant-manager": "file:E:/htmlProjects/Assistant-Manager/assistant-manager-assistant-manager-0.1.0-R6.tgz",
     "@deepseek-ai/cordis": "^4.0.1",
     "@deepseek-ai/cordis-plugin-loader": "^1.0.3",
     "@deepseek-ai/dsh-api-remotes": "^0.1.5-rc.2",

@@ -6,7 +6,7 @@
  * Remote contribution by hand, and drives it through one
  * {@link AssistantManagerController}.
  *
- * @module @assistant-manager/assistant-manager/client
+ * @module @dtranx/assistant-manager/client
  */
 
 // Type-only: pulls the locale plugin's Context merge (ctx.locale).

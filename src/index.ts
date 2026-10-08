@@ -9,7 +9,7 @@
  * watcher and the markdown parser. Each Remote method validates inputs,
  * mutates the store, and returns the updated view.
  *
- * @module @assistant-manager/assistant-manager
+ * @module @dtranx/assistant-manager
  */
 
 import { mkdir, readFile, writeFile } from 'node:fs/promises'

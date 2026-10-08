@@ -7,7 +7,7 @@
  * This component renders nothing visually — it only provides the bridge
  * between the assistant manager and the Chat input system.
  *
- * @module @assistant-manager/assistant-manager/client/CreateAssistantBridge
+ * @module @dtranx/assistant-manager/client/CreateAssistantBridge
  */
 
 import { useEffect, useRef } from 'react'
