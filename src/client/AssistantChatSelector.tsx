@@ -19,6 +19,11 @@ export type AssistantChatSelectorProps =
   PropsLocale<'settings.assistant'>
   & InjectFace<AssistantManagerFace>
 
+/** Truncate a name to at most 4 visible characters, appending "…" if trimmed. */
+function truncateName(name: string, max = 4): string {
+  return name.length > max ? name.slice(0, max) + '…' : name
+}
+
 /**
  * Render the assistant selector dropdown for the Chat interface.
  * @param props - locale copy and the panel snapshot with its actions.
@@ -58,7 +63,7 @@ export function AssistantChatSelector(props: AssistantChatSelectorProps) {
               <span className={css.triggerAvatar} aria-hidden="true">
                 {selectedAssistant.avatar || '🤖'}
               </span>
-              <span className={css.triggerName}>{selectedAssistant.name}</span>
+              <span className={css.triggerName}>{truncateName(selectedAssistant.name)}</span>
             </>
           )
           : (

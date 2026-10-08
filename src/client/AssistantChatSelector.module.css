@@ -61,6 +61,7 @@
   left: 0;
   z-index: 100;
   min-width: 240px;
+  max-width: 280px;
   max-height: 320px;
   overflow-y: auto;
   border: 1px solid var(--dsh-border, #d0d7de);
@@ -112,6 +113,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 200px;
 }
 
 .optionDesc {
