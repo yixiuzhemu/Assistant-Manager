@@ -20,6 +20,18 @@ import type {} from './assistant-remote.ts'
 import type { AssistantProfile, AssistantListView } from '../types.ts'
 import { dispatchCreateAssistant } from './create-bridge.ts'
 
+/**
+ * Reconciliation poll cadence. A deployment only forwards Host events its
+ * forwarded-event allowlist carries, so the registry's
+ * `assistant/assistants-updated` signal may never reach this page; the
+ * timer-driven re-read keeps the panel and the Chat dropdown converged with
+ * the Host store without a restart either way.
+ */
+const SYNC_POLL_INTERVAL_MS = 5000
+
+/** How long an armed create flow waits for the new assistant to appear. */
+const CREATE_WATCH_TIMEOUT_MS = 30 * 60 * 1000
+
 /** A structured failure the component maps onto localized copy. */
 export interface AssistantManagerError {
   /** `remote` = the Host refused the operation. */
@@ -124,6 +136,10 @@ export class AssistantManagerController {
   private queue: Promise<void> = Promise.resolve()
   private disposed = false
   private readonly assistant: AssistantNamespaceService
+  /** Deadline after which an armed create flow stops waiting. */
+  private createDeadline = 0
+  /** Reconciliation poll handle; keeps the page converged with the Host. */
+  private syncPoll: ReturnType<typeof setInterval> | undefined
 
   /**
    * @param ctx - the browser plugin context whose `remote.assistant` namespace this drives.
@@ -132,6 +148,10 @@ export class AssistantManagerController {
     this.assistant = getAssistantNamespace(ctx)
     // The registry's own change signal.
     this.disposers.push(ctx.remote.$on('assistant/assistants-updated', () => { this.scheduleReload() }))
+    // The signal above only arrives when the deployment's forwarded-event
+    // allowlist carries it; the timer re-read converges the panel and the
+    // Chat dropdown with the Host store either way.
+    this.syncPoll = setInterval(() => { this.scheduleReload() }, SYNC_POLL_INTERVAL_MS)
     this.scheduleReload()
   }
 
@@ -156,6 +176,10 @@ export class AssistantManagerController {
   /** Stop following events and refuse further work. */
   dispose(): void {
     this.disposed = true
+    if (this.syncPoll !== undefined) {
+      clearInterval(this.syncPoll)
+      this.syncPoll = undefined
+    }
     for (const dispose of this.disposers) dispose()
     this.disposers.length = 0
   }
@@ -189,16 +213,27 @@ export class AssistantManagerController {
     const error: AssistantManagerError | undefined = result.ok
       ? undefined
       : { kind: 'remote', detail: remoteDetail(result.error) }
+    const previous = this.store.getSnapshot()
+    // Steady-state skip: the reconciliation poll must not re-render the
+    // subscribers while the Host view has not moved.
+    if (view !== undefined && error === undefined
+      && previous.loaded && previous.error === undefined && !previous.creating
+      && view.revision === previous.revision
+      && view.documentPath === previous.documentPath
+      && view.selectedAssistantId === previous.selectedAssistantId) {
+      return
+    }
     this.publish(view, error)
   }
 
   /** Merge a list view into the store, preserving UI state. */
   private publish(view: AssistantListView | undefined, error: AssistantManagerError | undefined): void {
     const previous = this.store.getSnapshot()
-    // Detect if a new assistant was created (list changed while in creating state)
-    const newAssistantCreated = previous.creating
-      && view?.assistants.length !== undefined
-      && view.assistants.length > previous.assistants.length
+    // Assistants that appeared since the last read: while the create flow is
+    // armed, one of these is the Chat flow's file landing on the Host.
+    const knownIds = new Set(previous.assistants.map(a => a.id))
+    const createdNow = previous.creating
+      && (view?.assistants.some(a => !knownIds.has(a.id)) ?? false)
     // Converge the dropdown with the Host's live registration: adopt the
     // Host's pin on the first read of a fresh page (the Host restores it
     // from disk), and re-assert ours when a Host reload dropped it.
@@ -210,6 +245,15 @@ export class AssistantManagerController {
         this.reassertSelection(previous.selectedAssistantId)
       }
     }
+    // The create flow stays armed until a reload actually observes the new
+    // assistant (or the watch deadline passes), so the panel's banner and
+    // disabled controls track the real Chat-side creation progress.
+    let creating = previous.creating
+    let statusMessage = previous.statusMessage
+    if (creating && (createdNow || Date.now() >= this.createDeadline)) {
+      creating = false
+      statusMessage = undefined
+    }
     this.store.set({
       ...previous,
       loaded: true,
@@ -217,10 +261,8 @@ export class AssistantManagerController {
       revision: view?.revision ?? 0,
       assistants: view?.assistants ?? [],
       selectedAssistantId,
-      // Reset creating state when assistants are loaded (new assistant detected)
-      creating: view?.assistants.length === 0 ? previous.creating : false,
-      // Clear status message when a new assistant is created
-      statusMessage: newAssistantCreated ? undefined : previous.statusMessage,
+      creating,
+      statusMessage,
       // Never clobber an open editor's own diagnostic on a background refresh.
       error: previous.creating ? previous.error : error,
     })
@@ -290,6 +332,9 @@ export class AssistantManagerController {
 
   /** Enter the "create assistant" Chat flow: create a new session and dispatch the prompt. */
   private startCreate(prompt: string, statusMsg: string, noWorkspaceMsg: string): void {
+    // Arm the create watch: the banner and the disabled create button stay
+    // up until a reload observes the new assistant (or the deadline passes).
+    this.createDeadline = Date.now() + CREATE_WATCH_TIMEOUT_MS
     this.patch({ creating: true, error: undefined, statusMessage: undefined })
 
     // Access sessions and workspaces services via ctx.get() (declared in inject)
@@ -332,10 +377,6 @@ export class AssistantManagerController {
       // Dispatch the create request to the Chat input bridge component
       dispatchCreateAssistant({ prompt, autoSubmit: true })
       this.patch({ statusMessage: statusMsg })
-      // Reset creating state after a short delay to allow the bridge to process
-      setTimeout(() => {
-        this.patch({ creating: false })
-      }, 500)
     }).catch((error: unknown) => {
       this.patch({
         creating: false,
@@ -344,14 +385,17 @@ export class AssistantManagerController {
     })
   }
 
-  /** Clear the status message. */
+  /**
+   * Dismiss the status banner. Dismissing the create banner also ends the
+   * create watch, re-enabling the create button for a retried flow.
+   */
   private clearStatusMessage(): void {
-    this.patch({ statusMessage: undefined })
+    this.patch({ statusMessage: undefined, creating: false })
   }
 
   /** Cancel the "create assistant" Chat flow. */
   private cancelCreate(): void {
-    this.patch({ creating: false, error: undefined })
+    this.patch({ creating: false, error: undefined, statusMessage: undefined })
   }
 
   /** Get the currently selected assistant's profile. */
